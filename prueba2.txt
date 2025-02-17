@@ -1,0 +1,20 @@
+|x y one|
+
+proc moveRobot: steps [
+    move: steps .
+]
+
+proc turnRight [
+    turn: #right .
+]
+
+proc pickUpItems: num [
+    pick: num ofType: #chips .
+    pick: num ofType: #balloons .
+]
+
+[
+    moveRobot: 3 .
+    turnRight .
+    pickUpItems: 2 .
+]
