@@ -1,69 +1,37 @@
 import re
 
-def is_valid_variable(name, declared_vars):
-    # Check if the variable is declared or if it is a numeric value
-    return name in declared_vars or name.isdigit()
-
-def parse_program(filename):
-    with open(filename, 'r') as file:
-        lines = file.readlines()
-
-    declared_vars = set()
-    declared_procs = {}
-    program_valid = True
-    inside_proc = False
-    current_proc = None
-
-    for line in lines:
-        line = line.strip()
-
-        # Ignore empty lines
-        if not line:
-            continue
-
-        # Variable Declaration
-        if line.startswith("|") and line.endswith("|"):
-            vars_list = line.strip('|').split()
-            declared_vars.update(vars_list)
-
-        # Procedure Declaration
-        elif line.startswith("proc"):
-            match = re.match(r'proc\s+([a-z][a-zA-Z0-9]*:?)(?:\s+(.+))?\s*\[', line)
-            if match:
-                proc_name, params = match.groups()
-                declared_procs[proc_name] = set()
-                if params:
-                    declared_procs[proc_name] = set(params.split())
-                inside_proc = True
-                current_proc = proc_name
-            else:
-                print(f"Error: Sintaxis incorrecta en declaración de procedimiento: {line}")
-                program_valid = False
-
-        # Closing procedure
-        elif line == "]" and inside_proc:
-            inside_proc = False
-            current_proc = None
-
-        # Instruction Validation
-        elif inside_proc or line.startswith("[") or line.endswith("]"):
-            tokens = line.split()
-            if tokens[0] in ["move:", "turn:", "face:", "put:", "pick:", "goto:", "jump:"]:
-                if not is_valid_variable(tokens[1], declared_vars) and not tokens[1].isdigit():
-                    print(f"Error: Uso de variable no declarada en {line}")
-                    program_valid = False
-            elif tokens[0] in declared_procs:
-                # Check if the number of parameters match
-                params = tokens[1:]
-                if len(params) != len(declared_procs[tokens[0]]):
-                    print(f"Error: Llamada incorrecta al procedimiento {tokens[0]} en {line}")
-                    program_valid = False
-            else:
-                print(f"Error: Instrucción desconocida {tokens[0]} en {line}")
-                program_valid = False
-
-        else:
-            print(f"Error: Sintaxis inválida en {line}")
-            program_valid = False
-
-    return program_valid
+def parse_robot_code(filename):
+    try:
+        with open(filename, 'r', encoding='utf-8') as file:
+            code = file.read()
+    except FileNotFoundError:
+        print("Error: File not found.")
+        return False
+    
+    # Definir regex para sintaxis básica
+    variable_declaration = re.compile(r'\|[a-z]+(?:\s+[a-z]+)*\|')
+    procedure_declaration = re.compile(r'proc\s+[a-zA-Z_:]+(?:\s+[a-zA-Z_:]+)*\s*\[.*?\]', re.DOTALL)
+    procedure_call = re.compile(r'[a-zA-Z_:]+(?:\s+[a-zA-Z_:]+)*\.')
+    
+    # Validar estructura de variables
+    if not variable_declaration.search(code):
+        print("Error: No valid variable declaration found.")
+        return False
+    
+    # Validar procedimientos
+    procedures = procedure_declaration.findall(code)
+    if not procedures:
+        print("Error: No valid procedures found.")
+        return False
+    
+    # Validar llamadas a procedimientos
+    calls = procedure_call.findall(code)
+    defined_procs = {p.split()[1] for p in procedures}
+    for call in calls:
+        proc_name = call.split()[0]
+        if proc_name not in defined_procs:
+            print(f"Error: Undefined procedure called - {proc_name}")
+            return False
+    
+    print("Syntax is correct.")
+    return True
