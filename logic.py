@@ -16,17 +16,14 @@ def parse_program(filename):
     
     for line in lines:
         line = line.strip()
-        
-        # Ignore empty lines
+
         if not line:
             continue
-        
-        # Variable Declaration
+
         if line.startswith("|") and line.endswith("|"):
             vars_list = line.strip('|').split()
             declared_vars.update(vars_list)
         
-        # Procedure Declaration
         elif line.startswith("proc"):
             match = re.match(r'proc\s+([a-z][a-zA-Z0-9]*:?)(?:\s+(.+))?\s*\[', line)
             if match:
@@ -40,12 +37,10 @@ def parse_program(filename):
                 print(f"Error: Sintaxis incorrecta en declaración de procedimiento: {line}")
                 program_valid = False
         
-        # Closing procedure
         elif line == "]" and inside_proc:
             inside_proc = False
             current_proc = None
         
-        # Instruction Validation
         elif inside_proc or line.startswith("[") or line.endswith("]"):
             tokens = line.split()
             if tokens[0] in ["move:", "turn:", "face:", "put:", "pick:", "goto:", "jump:"]:
@@ -63,10 +58,3 @@ def parse_program(filename):
             program_valid = False
     
     return program_valid
-
-if __name__ == "__main__":
-    filename = "robot_code.txt"  # Reemplaza con el nombre del archivo de entrada
-    if parse_program(filename):
-        print("Sí")
-    else:
-        print("No")
