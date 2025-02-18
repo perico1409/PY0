@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     # Verificar si el archivo existe y luego procesarlo
     if os.path.isfile(full_path):
-        if lg.parse_robot_code(full_path):
+        if lg.analizar_codigo_robot(full_path):
             print("Sí cumple")
         else:
             print("No cumple")

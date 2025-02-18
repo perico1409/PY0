@@ -1,0 +1,13 @@
+| x y z |
+proc mover [
+    move: 1 .
+]
+
+proc girar [
+    turn: #left .
+]
+
+[
+    move: 5 .
+    turn: #left .
+]

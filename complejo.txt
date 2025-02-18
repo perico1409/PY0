@@ -1,0 +1,19 @@
+| pos1 pos2 contador |
+proc moverNorte: pasos [
+    | temporal |
+    temporal := pasos .
+    while: canMove: 1 inDir: #north do: [
+        move: 1 inDir: #north .
+        temporal := temporal - 1 .
+    ]
+]
+
+proc ponerChips: cantidad [
+    put: cantidad ofType: #chips .
+]
+
+[
+    moverNorte: 5 .
+    ponerChips: 3 .
+    face: #south .
+]

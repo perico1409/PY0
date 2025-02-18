@@ -1,0 +1,8 @@
+| x y Z |  # Error: variable en mayúscula
+proc mover: n [
+    move: n .
+]
+
+[
+    mover: 3 .
+]

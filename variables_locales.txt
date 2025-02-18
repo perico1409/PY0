@@ -1,0 +1,13 @@
+| x y z |
+proc moverNorte: pasos [
+    | temporal |
+    temporal := pasos .
+    while: canMove: 1 inDir: #north do: [
+        move: 1 . 
+        temporal := temporal - 1 .
+    ] .
+]
+
+[
+    moverNorte: 5 .
+]
