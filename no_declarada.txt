@@ -1,0 +1,9 @@
+| x y z |
+
+proc mover [
+    move: x .  # Error: 'x' no está declarada.
+]
+
+[
+    mover: 5 .
+]

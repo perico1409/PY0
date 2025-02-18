@@ -1,0 +1,9 @@
+| a b c |
+
+proc mover [
+    a := 5  # Error: falta el punto al final de la asignación.
+]
+
+[
+    mover: 1 .
+]

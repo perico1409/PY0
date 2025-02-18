@@ -1,0 +1,10 @@
+| x y z |
+
+proc ponerChips cantidad [
+    put: cantidad ofType: #chips .
+]
+
+[
+    ponerChips: 2 .
+    ponechips: 3 .  # Error: 'ponechips' no está definido.
+]

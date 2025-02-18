@@ -1,0 +1,9 @@
+| a b c |
+
+proc Mover [
+    move: 1 .
+]
+
+[
+    Mover: 1 .  # Error: el nombre del procedimiento comienza con mayúscula
+]

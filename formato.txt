@@ -1,0 +1,9 @@
+| a b c |
+
+proc mover param1 param2 [
+    move: 1 .
+]
+
+[
+    mover: 2 3 .
+]

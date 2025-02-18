@@ -20,15 +20,6 @@ def analizar_codigo_robot(nombre_archivo):
             linea = linea[:linea.index('#')]
         return linea.strip()
 
-    def validar_nombre_proc(nombre):
-        # Acepta nombres de procedimientos con parámetros, incluyendo 'and' o cualquier identificador
-        partes = nombre.split()
-        for parte in partes:
-            # Verificar que cada parte sea alfanumérica o ':' o 'and' como un separador
-            if not (parte.isalnum() or parte == ':' or parte == 'and' or parte.isalpha()):
-                return False
-        return True
-
     # Primera pasada: recolectar variables y procedimientos
     en_procedimiento = False
     proc_actual = None
@@ -89,42 +80,16 @@ def analizar_codigo_robot(nombre_archivo):
             contenido_actual.append(linea)
 
     # Segunda pasada: validar instrucciones
-    en_bloque_principal = False
-    
     for linea in codigo:
         linea = limpiar_linea(linea)
         if not linea:
             continue
 
-        print(f"Verificando línea: {linea}")  # Mensaje de depuración para ver qué se está procesando
-
-        if linea == '[':
-            en_bloque_principal = True
-        elif linea == ']':
-            en_bloque_principal = False
-        elif en_bloque_principal:
-            # Verificar que las asignaciones terminen con un punto
-            if ':=' in linea:
-                if not linea.endswith('.'):
-                    print(f"Error: Falta el punto al final de la asignación: {linea}")  # Mensaje de depuración
-                    return False
-
-            # Validar llamadas a procedimientos y comandos
-            if ':' in linea and not linea.startswith('|'):
-                partes = linea.split(':')
-                comando = partes[0].strip()
-                
-                # Verificar si es un comando válido o una llamada a procedimiento
-                encontrado = False
-                for proc in procedimientos:
-                    nombre_base_proc = proc.split(':')[0].strip()
-                    if comando == nombre_base_proc:
-                        encontrado = True
-                        break
-                
-                if not encontrado and comando not in comandos_validos:
-                    print(f"Error: Comando o procedimiento inválido: {comando}")
-                    return False
+        # Verificación de asignaciones
+        if ':=' in linea:
+            if not linea.endswith('.'):
+                print(f"Error: Falta el punto al final de la asignación: {linea}")
+                return False
 
     print("La sintaxis es correcta.")
     return True

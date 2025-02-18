@@ -1,0 +1,9 @@
+| a b c |
+
+proc ponerChips cantidad [
+    put: cantidad ofType: #chips .
+]
+
+[
+    ponerChips: 2,  # Error: parámetro no alfanumérico.
+]
