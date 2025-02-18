@@ -1,9 +1,17 @@
 | a b c |
 
-proc mover param1 param2 [
-    move: 1 .
+proc PonerChips cantidad [   # Error: El nombre del procedimiento comienza con mayúscula.
+    put: cantidad ofType: #chips .
 ]
 
-[
-    mover: 2 3 .
+proc moverNorte: pasos [    # Error: El nombre del procedimiento tiene parámetros antes de los corchetes.
+    move: 1 inDir: #north .
 ]
+
+proc sumarNúmeros: n m [    # Error: El nombre del procedimiento tiene parámetros en el nombre.
+    resultado := n + m .
+]
+
+proc putChips cantidad [     # Error: El nombre del procedimiento está correcto, pero la sintaxis está mal.
+    put: cantidad ofType: #chips
+]                           # Error: Falta un corchete de cierre o está mal formateado.

@@ -1,5 +1,3 @@
-import re
-
 def analizar_codigo_robot(nombre_archivo):
     try:
         with open(nombre_archivo, 'r', encoding='utf-8') as archivo:
@@ -21,8 +19,6 @@ def analizar_codigo_robot(nombre_archivo):
             linea = linea[:linea.index('#')]
         return linea.strip()
 
-    #Expresión regular para extraer nombre del procedimiento, ignorando parámetros
-    expreg_proc = re.compile(r"proc\s+([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*[:\[])")
     en_procedimiento = False
     proc_actual = None
     contenido_actual = []
@@ -42,31 +38,24 @@ def analizar_codigo_robot(nombre_archivo):
                     print(f"Error: Variable '{var}' debe estar en minúsculas y ser alfanumérica.")
                     return False
                 variables_globales.add(var)
+
         elif linea.startswith('proc '):
-            match = expreg_proc.match(linea)
-            if match:
-                nombre_completo = match.group(1)  
-
-                if nombre_completo[0].isupper():
-                    print(f"Error: El nombre del procedimiento '{nombre_completo}' no debe comenzar con mayúscula.")
-                    return False
-
-                proc_actual = nombre_completo
-                en_procedimiento = True
-                contenido_actual = []
-                print(f"Debug: Procedimiento encontrado - {nombre_completo}")
-
-            else:
-                print(f"Error: Formato inválido de procedimiento: {linea}")
+            nombre_completo = linea[5:].split('[')[0].strip() 
+            if nombre_completo[0].isupper():
+                print(f"Error: El nombre del procedimiento '{nombre_completo}' no debe comenzar con mayúscula.")
                 return False
 
+            proc_actual = nombre_completo
+            en_procedimiento = True
+            contenido_actual = []
+
+            print(f"Debug: Procedimiento encontrado - {nombre_completo}")
         elif en_procedimiento and linea.startswith('|'):
             if not linea.endswith('|'):
                 print(f"Error: Bloque de declaración de variables locales no está cerrado correctamente: {linea}")
                 return False
             vars_locales = linea[1:-1].split(',') 
             variables_locales[proc_actual] = {v.strip() for v in vars_locales}
-
         elif linea.endswith(']'):
             if en_procedimiento:
                 contenido_actual.append(linea)
@@ -74,9 +63,9 @@ def analizar_codigo_robot(nombre_archivo):
                 en_procedimiento = False
                 proc_actual = None
                 contenido_actual = []
+
         elif en_procedimiento:
             contenido_actual.append(linea)
-
     for linea in codigo:
         linea = limpiar_linea(linea)
         if not linea:
