@@ -22,7 +22,7 @@ def analizar_codigo_robot(nombre_archivo):
         return linea.strip()
 
     #Expresión regular para extraer nombre del procedimiento, ignorando parámetros
-    regex_proc = re.compile(r"proc\s+([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*[:\[])")
+    expreg_proc = re.compile(r"proc\s+([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*[:\[])")
     en_procedimiento = False
     proc_actual = None
     contenido_actual = []
@@ -43,7 +43,7 @@ def analizar_codigo_robot(nombre_archivo):
                     return False
                 variables_globales.add(var)
         elif linea.startswith('proc '):
-            match = regex_proc.match(linea)
+            match = expreg_proc.match(linea)
             if match:
                 nombre_completo = match.group(1)  
 
