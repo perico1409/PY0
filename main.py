@@ -1,13 +1,21 @@
 import logic as lg
 import os
 
-data_dir = os.path.dirname(os.path.realpath('__file__')) + '/PY0/'
-
+# Definir el directorio donde están los archivos
+data_dir = os.path.dirname(os.path.abspath(__file__))  # Usamos __file__ para obtener la ruta absoluta
 
 if __name__ == "__main__":
-    
-    filename = input("digite el nombre del archivo:") + ".txt" 
-    if lg.parse_robot_code(filename):
-        print("Sí cumple")
+    # Obtener el nombre del archivo desde el usuario
+    filename = input("Digite el nombre del archivo (sin .txt):") + ".txt"
+
+    # Concatenar la ruta completa del archivo
+    full_path = os.path.join(data_dir, filename)
+
+    # Verificar si el archivo existe y luego procesarlo
+    if os.path.isfile(full_path):
+        if lg.parse_robot_code(full_path):
+            print("Sí cumple")
+        else:
+            print("No cumple")
     else:
-        print("No cumple")
+        print(f"Error: El archivo {filename} no existe.")

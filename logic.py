@@ -1,36 +1,63 @@
-import re
-
 def parse_robot_code(filename):
     try:
         with open(filename, 'r', encoding='utf-8') as file:
-            code = file.read()
+            code = file.read().strip().splitlines()
     except FileNotFoundError:
         print("Error: File not found.")
         return False
     
-    # Definir regex para sintaxis básica
-    variable_declaration = re.compile(r'\|[a-z]+(?:\s+[a-z]+)*\|')
-    procedure_declaration = re.compile(r'proc\s+[a-zA-Z_:]+(?:\s+[a-zA-Z_:]+)*\s*\[.*?\]', re.DOTALL)
-    procedure_call = re.compile(r'[a-zA-Z_:]+(?:\s+[a-zA-Z_:]+)*\.')
+    variables = set()
+    procedures = {}
+    procedure_calls = []
     
-    # Validar estructura de variables
-    if not variable_declaration.search(code):
-        print("Error: No valid variable declaration found.")
-        return False
+    # Paso 1: Recorrer cada línea y verificar variables y procedimientos
+    for line in code:
+        line = line.strip()
+        
+        # Validar declaración de variables
+        if line.startswith('|'):
+            # Declarar variables
+            line = line[1:-1].strip()  # Eliminar las barras "|"
+            vars_in_line = line.split()
+            if vars_in_line:
+                for var in vars_in_line:
+                    if not var.islower():  # Las variables deben estar en minúscula
+                        print(f"Error: Variable '{var}' debe estar en minúscula.")
+                        return False
+                    variables.add(var)
+        
+        # Validar declaración de procedimientos
+        elif line.startswith('proc'):
+            # Procesar declaración de procedimiento
+            proc_name_end = line.find(':')
+            if proc_name_end == -1:
+                print(f"Error: El procedimiento no tiene parámetros definidos correctamente en: {line}")
+                return False
+            proc_name = line[4:proc_name_end].strip()
+            if proc_name not in procedures:
+                procedures[proc_name] = []  # Crear procedimiento vacío en el diccionario
+            # Guardamos la línea del procedimiento para posteriores validaciones.
+            procedures[proc_name].append(line)
+        
+        # Verificar llamadas a procedimientos
+        elif '.' in line:
+            # Se espera una llamada a un procedimiento
+            proc_name = line.split(':')[0].strip()
+            if proc_name not in procedures:
+                print(f"Error: Procedimiento '{proc_name}' no está definido.")
+                return False
+            procedure_calls.append(proc_name)
     
-    # Validar procedimientos
-    procedures = procedure_declaration.findall(code)
-    if not procedures:
-        print("Error: No valid procedures found.")
-        return False
+    # Paso 2: Verificación de que todas las llamadas a procedimientos son válidas
+    for proc in procedure_calls:
+        if proc not in procedures:
+            print(f"Error: Procedimiento '{proc}' llamado pero no existe.")
+            return False
     
-    # Validar llamadas a procedimientos
-    calls = procedure_call.findall(code)
-    defined_procs = {p.split()[1] for p in procedures}
-    for call in calls:
-        proc_name = call.split()[0]
-        if proc_name not in defined_procs:
-            print(f"Error: Undefined procedure called - {proc_name}")
+    # Paso 3: Verificación de cierre correcto de bloques de procedimiento
+    for proc, lines in procedures.items():
+        if not any(line.endswith(']') for line in lines):
+            print(f"Error: El procedimiento '{proc}' no tiene un bloque correctamente cerrado.")
             return False
     
     print("Syntax is correct.")
