@@ -51,6 +51,12 @@ def analizar_codigo_robot(nombre_archivo):
             
             en_procedimiento = True
             nombre_completo = linea[5:].split('[')[0].strip()
+            
+            # Verificar que el nombre del procedimiento no comience con mayúscula
+            if nombre_completo[0].isupper():
+                print(f"Error: El nombre del procedimiento '{nombre_completo}' no debe comenzar con mayúscula.")
+                return False
+
             proc_actual = nombre_completo
             contenido_actual = []
             
@@ -63,7 +69,7 @@ def analizar_codigo_robot(nombre_archivo):
             if not linea.endswith('|'):
                 print(f"Error: Bloque de declaración de variables locales no está cerrado correctamente: {linea}")
                 return False
-            vars_locales = linea[1:-1].split(',')
+            vars_locales = linea[1:-1].split(',') 
             variables_locales[proc_actual] = {v.strip() for v in vars_locales}
 
         # Fin de procedimiento
