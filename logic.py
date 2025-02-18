@@ -96,6 +96,8 @@ def analizar_codigo_robot(nombre_archivo):
         if not linea:
             continue
 
+        print(f"Verificando línea: {linea}")  # Mensaje de depuración para ver qué se está procesando
+
         if linea == '[':
             en_bloque_principal = True
         elif linea == ']':
@@ -104,7 +106,7 @@ def analizar_codigo_robot(nombre_archivo):
             # Verificar que las asignaciones terminen con un punto
             if ':=' in linea:
                 if not linea.endswith('.'):
-                    print(f"Error: Falta el punto al final de la asignación: {linea}")
+                    print(f"Error: Falta el punto al final de la asignación: {linea}")  # Mensaje de depuración
                     return False
 
             # Validar llamadas a procedimientos y comandos
